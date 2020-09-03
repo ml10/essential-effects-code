@@ -13,6 +13,6 @@ object DebugExample extends IOApp {
 
   val seq =
     (hello, world)
-      .mapN((h, w) => s"$h $w")
+      .parMapN((h, w) => s"$h $w")
       .debug() // <1>
 }

@@ -1,15 +1,17 @@
 package com.innerproduct.ee.apps
 
 import cats.effect._
-import scala.annotation.nowarn
+import scala.concurrent.duration._
+import com.innerproduct.ee.debug._
 
 object TickingClock extends IOApp {
-  @nowarn
   def run(args: List[String]): IO[ExitCode] =
-    tickingClock
-      .guaranteeCase(???) // <2>
+    clock2
+      .guaranteeCase(_ => IO("something goes here").debug().void) // <2>
       .as(ExitCode.Success)
 
-  @nowarn
-  val tickingClock: IO[Unit] = ??? // <1>
+  val tick: IO[Long] = IO.sleep(1.second) *> IO(System.currentTimeMillis()).debug()
+
+  import cats.syntax.flatMap._
+  val clock2: IO[Unit] = tick.foreverM.void
 }
